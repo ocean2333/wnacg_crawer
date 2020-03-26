@@ -1,6 +1,7 @@
 package Crawer;
 
 import FileOperation.*;
+import Settings.Setting;
 import template.Album;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
@@ -8,6 +9,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 import java.io.*;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -53,6 +55,7 @@ public class Downloader {
     }
 
     private void download() throws IOException {
+
         int tryTimes = 0;
         Connection connection = Jsoup.connect(downloadUrl);
         Connection.Response response =  Connecter.excute(connection.method(Connection.Method.GET).timeout(50000));
@@ -80,12 +83,29 @@ public class Downloader {
                 .replace("/"," ")
                 .replace("|"," ")
                 .replace(":"," ");
-        FileOutputStream fos = new FileOutputStream(zipFileName+".zip");
+        FileOutputStream fos;
+        if(Setting.hasDownloadPath){
+            fos = new FileOutputStream(Setting.downloadPath +"\\"+ zipFileName+".zip");
+        }else{
+            fos = new FileOutputStream(zipFileName+".zip");
+        }
         fos.write(response.bodyAsBytes());
         fos.close();
-        WinRar.winrar(zipFileName+".zip",zipFileName+"\\");
-        System.out.println("download end");
 
+        if(Setting.hasWinrar){
+            if(Setting.hasUnzipPath&&Setting.hasDownloadPath){
+                WinRar.winrar(Setting.downloadPath+"\\" +zipFileName+".zip",Setting.unzipPath+"\\"+zipFileName+"\\");
+            }else if(Setting.hasDownloadPath){
+                WinRar.winrar(Setting.downloadPath +"\\"+zipFileName+".zip",zipFileName+"\\");
+            }else if(Setting.hasUnzipPath){
+                WinRar.winrar(zipFileName+".zip",Setting.unzipPath+"\\"+zipFileName+"\\");
+            }else{
+                WinRar.winrar(zipFileName+".zip",zipFileName+"\\");
+            }
+        }else{
+
+        }
+        System.out.println("download end");
     }
 
 

@@ -1,10 +1,11 @@
 package FileOperation;
 
+import Settings.Setting;
+
 import java.io.File;
 
 public class WinRar {
     public static String rarPath = "D:\\WinRAR\\WinRAR.exe";
-
     public static void setRarPath(String path){
         File winrar = new File(path);
         if(winrar.isFile()){
@@ -24,7 +25,7 @@ public class WinRar {
         File winrarFile=new File(rarPath);
         if(winrarFile.isFile()&&winrarFile.exists()){
             String cmd="";
-            cmd = rarPath + " x " + "\"" +winrarfile + "\"" + " "+ "\"" + folder + "\"";
+            cmd = Setting.winrarPath + " x " + "\"" +winrarfile + "\"" + " "+ "\"" + folder + "\"";
             try {
                 Process proc = Runtime.getRuntime().exec(cmd);
                 if (proc.waitFor() != 0) {

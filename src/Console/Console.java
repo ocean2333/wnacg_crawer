@@ -2,12 +2,16 @@ package Console;
 
 import Crawer.Downloader;
 import Crawer.SearchResultGetter;
+import FileOperation.Deleter;
+import Settings.Setting;
 import template.Album;
 import template.Page;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Objects;
 
 public class Console {
     private static String path;
@@ -34,7 +38,7 @@ public class Console {
     * download x-z 下载两个数（含自身）之间的 （没搞好）
     * shutdown 停止
     * cleanzip 清除下载目录下所有zip
-    * delete xxx 删除xxx
+    * delete xxx 删除下载目录下的xxx
     * */
     public void work() throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -59,7 +63,22 @@ end:        while (true){
                     download(commandBody);
                     break;
                 case "cleanzip":
-
+                    File f;
+                    if(Setting.hasDownloadPath){
+                        f = new File(Setting.downloadPath+"\\");
+                    }else{
+                        f = new File("\\");
+                    }
+                    for(File df: Objects.requireNonNull(f.listFiles())){
+                        if(df.isFile()&&df.getName().split(".")[1]=="zip"){
+                            df.delete();
+                        }
+                    }
+                    break;
+                case "delete":
+                    commandBody = command.split(" ")[1];
+                    Deleter.delete(commandBody);
+                    break;
                 case "shutdown":
                     break end;
                 default:
