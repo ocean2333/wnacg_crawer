@@ -1,0 +1,10 @@
+
+C
+java:S1170"!Make this final field static too.(½©Æåşÿÿÿÿ8ô¼²Ş.
+{	java:S116"ZRename this field "search_url_tail" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(½©Æåşÿÿÿÿ8ô¼²Ş.
+V
+java:S11440"9Remove this unused private "getOnePageWebContent" method.(Ñ¡Çú8•ö¹Ş.
+v	java:S116"ZRename this field "search_url_head" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(·²â€8ô¼²Ş.
+>
+java:S1170"!Make this final field static too.(·²â€8ô¼²Ş.
+o	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(Ú±ñÊ
