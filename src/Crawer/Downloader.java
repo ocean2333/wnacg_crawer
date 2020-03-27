@@ -105,7 +105,7 @@ public class Downloader {
         }else{
 
         }
-        System.out.println("download end");
+        System.out.println("download " + name + " end");
     }
 
 

@@ -2,10 +2,13 @@ package Console;
 
 import Crawer.Downloader;
 import Crawer.SearchResultGetter;
+import Download.Pool;
+import Download.WorkThread;
 import FileOperation.Deleter;
 import Settings.Setting;
 import template.Album;
 import template.Page;
+import template.Work;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -31,17 +34,24 @@ public class Console {
 
     /*
     * 控制台，根据指令执行操作
-    * search xxx 搜索xxx并展示第一页
-    * turnto x 展示当前搜索内容的第x页
-    * download x 下载第x个
+    * search xxx/s x 搜索xxx并展示第一页
+    * turnto x/tt x 展示当前搜索内容的第x页
+    * download x/d x 下载第x个
     * download x,y,z 下载若干个 （没搞好）
-    * download x-z 下载两个数（含自身）之间的 （没搞好）
-    * shutdown 停止
-    * cleanzip 清除下载目录下所有zip
-    * delete xxx 删除下载目录下的xxx
+    * download x-z 下载两个数（含自身）之间的
+    * shutdown/sd 停止
+    * cleanzip/cz 清除下载目录下所有zip （测试中）
+    * delete xxx 删除下载目录下的xxx （测试中）
+    * md x 多线程下载（测试中）
+    * dt x
+    * st
+    * da
     * */
     public void work() throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        WorkThread wt = new WorkThread();
+        wt.start();
+
 end:        while (true){
             System.out.println("请输入指令");
             String command = br.readLine();
@@ -50,18 +60,30 @@ end:        while (true){
             String commandBody;
 
             switch (commandHead){
+                case "s":
                 case "search":
                     commandBody = command.split(" ")[1];
                     search(commandBody);
                     break;
+                case "tt":
                 case "turnto":
                     commandBody = command.split(" ")[1];
                     turnto(commandBody);
                     break;
+                case "d":
                 case "download":
                     commandBody = command.split(" ")[1];
-                    download(commandBody);
+                    if(commandBody.contains("-")){
+                        int s = string2Int(commandBody.split("-")[0]);
+                        int e = string2Int(commandBody.split("-")[1]);
+                        for(int i = s; i<=e; i++){
+                            download(Integer.toString(i));
+                        }
+                    }else{
+                        download(commandBody);
+                    }
                     break;
+                case "cz":
                 case "cleanzip":
                     File f;
                     if(Setting.hasDownloadPath){
@@ -70,7 +92,8 @@ end:        while (true){
                         f = new File("\\");
                     }
                     for(File df: Objects.requireNonNull(f.listFiles())){
-                        if(df.isFile()&&df.getName().split(".")[1]=="zip"){
+                        if(df.getName().endsWith(".zip")){
+                            System.out.println(df.getName()+" cleaned");
                             df.delete();
                         }
                     }
@@ -79,6 +102,30 @@ end:        while (true){
                     commandBody = command.split(" ")[1];
                     Deleter.delete(commandBody);
                     break;
+                case "md":
+                    commandBody = command.split(" ")[1];
+                    if(commandBody.contains("-")){
+                        int s = string2Int(commandBody.split("-")[0]);
+                        int e = string2Int(commandBody.split("-")[1]);
+                        for(int i = s; i<=e; i++){
+                            Work w = new Work(searcher.getPage().getAlbumList().get(i-1));
+                            Pool.addWork(w);
+                            System.out.println(w.getA().getName()+" was added to pool");
+                        }
+                    }else{
+                        Work w = new Work(searcher.getPage().getAlbumList().get(string2Int(commandBody)-1));
+                        Pool.addWork(w);
+                        System.out.println(w.getA().getName()+" was added to pool");
+                    }
+                    break;
+                case "dt":
+                    commandBody = command.split(" ")[1];
+                    Pool.interruptThreadByNum(string2Int(commandBody));
+                    break;
+                case "st":
+                    Pool.showThread();
+                    break;
+                case "sd":
                 case "shutdown":
                     break end;
                 default:

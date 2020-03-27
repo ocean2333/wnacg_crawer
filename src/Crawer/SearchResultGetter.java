@@ -31,6 +31,10 @@ public class SearchResultGetter{
         keyWord = word;
         nowPage = 1;
         getterInit();
+        if(response==null){
+            System.out.println(word +"getter build failed because internet error");
+            return;
+        }
         containerInit();
         connectToWeb();
         getTargetWeb();
@@ -105,6 +109,9 @@ public class SearchResultGetter{
         nowPage = 1;
         connectToWeb();
         getTargetWeb();
+        if(response==null){
+            return;
+        }
         getMaxPage();
     }
 
